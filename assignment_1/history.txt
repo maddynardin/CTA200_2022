@@ -1,0 +1,206 @@
+    1   /cita/local/bin/passwd
+    2  whoami
+    3  pwd
+    4  cd /home/$murray
+    5  pwd
+    6  ls
+    7  pwd
+    8  cd /home/murray
+    9  pwd
+   10  cd Papers/Hopkins/All_Feedback/second_draft
+   11  pwd
+   12  ls
+   13  envince 
+   14  evin
+   15  pwd
+   16  evince sfh_vs_fbmodel.pdf
+   17  history
+   18  cd \home\student17
+   19  cd \home\$student17
+   20  pwd
+   21  ls
+   22  cd \Documents
+   23  pwd
+   24  ls
+   25  pwd
+   26  cd .
+   27  pwd
+   28  cd ..
+   29  pwd
+   30  mkdir CTA200_2020
+   31  ls
+   32  la -
+   33  ls-
+   34  ls - 
+   35  pwd
+   36  cd CTA200_2020
+   37  pwd
+   38  ls -la > list_dir
+   39  ls -la
+   40  which vi
+   41   vim list_dir
+   42  wd
+   43  pwd
+   44  cd CTA200_2022
+   45  cd \CTA200_2022
+   46  pwd
+   47  cd \CTA_2020
+   48  cd \CTA200_202
+   49  cd \CTA200_2020
+   50  pws
+   51  pwd
+   52  ls -
+   53  ls
+   54  vim list_dir
+   55  wim list_dir
+   56  vim list_dir
+   57  vi list_dir
+   58  vi test.txt
+   59  pwd
+   60  ls
+   61  find . -name "list" -print
+   62  find . -name "*list*"
+   63  python
+   64  module list
+   65  module
+   66  module avial
+   67  module avail
+   68  module load gcc
+   69  gcc --version
+   70  module load python
+   71  python --version
+   72  module list
+   73  cs 
+   74  cd \home\Fhorrobin
+   75  cd \home\$Fhorrobin
+   76  cd \home
+   77  pwd
+   78  cd \home\fhorrobin
+   79  cd \home\$fhorrobin
+   80  pwd
+   81  cd \home\fhorrobin
+   82  cd \home
+   83  cd\home\$fhorrobin
+   84  cd scratch-lustre
+   85  pwd
+   86  cd /mnt
+   87  ls -la
+   88  cd \scratch-lustre\
+   89  pwd
+   90  cd student17/
+   91  pwd
+   92  ls -la
+   93  >CTA200_2022
+   94  pwd
+   95  ls
+   96  cd CTA200_2022
+   97  cd \CTA200_2022
+   98  pwd
+   99  rm CTA200_2022
+  100  pwd
+  101  ls
+  102  rm CTA200_2022
+  103  lw
+  104  pwd
+  105  ls
+  106  pwd
+  107  cd \mnt
+  108  cd mnt
+  109  mnt
+  110  cd /mnt/scratch-lustre/student17
+  111  ls
+  112  mkdir --help
+  113  mkdir CTA200_2022
+  114  pwd
+  115  ls -la
+  116  cd CTA200_2022
+  117  pwd
+  118  mkdir assignment_1
+  119  pwd
+  120  vi README.md
+  121  cd \home\murry
+  122  cd \home\murray
+  123  cd \home\$murray
+  124  cd home\murray
+  125  pwd
+  126  cd /home/murray
+  127  pwd
+  128  find "Hello"
+  129  pwd
+  130  find "Hello_world.c"
+  131  find -name"Hello_world.c"
+  132  find -name "Hello_world.c"
+  133   cd /Papers
+  134  pwd
+  135  cd Papers
+  136  cd tmp
+  137  ls
+  138  cp Hello_world.c /mnt/scratch-lustre/student17
+  139  find -name "Hello_world.py"
+  140  pwd
+  141  ..
+  142  cd ..
+  143  pwd
+  144  cd ..
+  145  pwd
+  146  find -name "Hello_world.py"
+  147  cd tmp
+  148  ls
+  149  cp Hello_world.py \mnt\scratch-lustre/student17
+  150  cp Hello_world.py /mnt/scratch-lustre/student17
+  151  cd /mnet/scratch-lustre/student17
+  152  cd /met/scratch-lustre/student17
+  153  cd /mnt/scratch-lustre/student17
+  154  cd mnt
+  155  cd/mnt
+  156  cd mnt
+  157  cd /mnt/scratch-lustre/student17
+  158  pwd
+  159  ;s
+  160  ls
+  161  mv Hello_world.c Hello_world.py /mnt/scratch-lustre/student17/CTA200_2022/assignment_1
+  162  pwd
+  163  ls
+  164  cd CTA200_2022
+  165  ls -la
+  166  cd assignment_1
+  167  ls -la
+  168  mv Hello_world.py Hello_world_nardin.py
+  169  mv Hello_wolrd.c Hello_world_nardin.c
+  170  mv Hello_world.c Hello_world_nardin.c
+  171  pwd
+  172  ls -la
+  173  gcc Hello_world_nardin.c
+  174  ls -la
+  175  mv a.out Hellow_world.x
+  176  ls -la
+  177  Hello_world_nardin.c
+  178  ./Hello_world_nardin.c
+  179  ./Hellow_world.x
+  180   python Hello_world_nardin.py
+  181  module
+  182  module list
+  183  module load python
+  184  python --version
+  185  python Hello_world_nardin.py
+  186  vi Hello_world_nardin.py
+  187  python Hello_world_nardin.py
+  188  vi Hello_world_nardin.c
+  189  gcc Hello_world_nardin.c
+  190  ls -la
+  191  mv a.out Hellow_world2.x
+  192  ./Hellow_world2.x
+  193  rm Hellow_world2.x
+  194  ls -la
+  195  gcc Hello_world_nardin.c
+  196  rm a.out
+  197  ls -la
+  198  vi Hello_world_nardin.c
+  199  gcc Hello_world_nardin.c
+  200  .\a.out
+  201  ls -la
+  202  ./a.out
+  203  mv a.out output_c.txt
+  204  python Hello_world_nardin.py > output_python.txt
+  205  vi output_python.txt
+  206  history > history.txt
