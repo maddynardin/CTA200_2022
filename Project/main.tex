@@ -1,0 +1,140 @@
+\documentclass[twocolumn]{aastex631}
+
+\newcommand{\vdag}{(v)^\dagger}
+\newcommand\aastex{AAS\TeX}
+\newcommand\latex{La\TeX}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    allbordercolors = {white},
+    allcolors = {blue},
+}
+
+\shorttitle{Automated Noise Temperature Meter}
+\shortauthors{Madeline Nardin}
+
+\begin{document}
+
+\title{Automated Noise Temperature Meter}
+\author{Madeline Nardin}
+\affiliation{Dunlap Institute for Astronomy \& Astrophysics, University of Toronto}
+\hfill
+
+\section{Background} \label{sec:intro}
+\begin{figure*}[ht!]
+ \center
+  \includegraphics[width=\textwidth]{block.png}
+  \caption{Experimental set up consisting of a switch controlled by a Trinket MO microcontroller, a 346A noise source, a ZX60-112LN+ LNA, and an AirSpy SDR.}
+  \label{fig:block}
+\end{figure*}
+The front end of a radio telescope at the simplest form consists of a feed connected to a low-noise amplifier (LNA) connected to a receiver \citep{gary_2019}. In radio astronomy noise sources are classified in terms of thermal noise in units of temperature. Noise temperature is proportional to the power of received by the system by the following relation
+\begin{equation}\label{eq:p_sys}
+P  = G\times T_{system}
+\end{equation}
+\begin{center}
+Such that G and $ T_{system}$ denote the gain and temperature of the system respectively.
+\end{center}
+
+The total noise of a system is the sum of all sources, which can be simplified in the application of this project to encompass the load temperature and the LNA temperature shown in equation \ref{eq:Tsys}.
+\begin{equation}\label{eq:Tsys}
+T_{sys} = T_{LNA} + T_{LOAD}
+\end{equation}
+
+Characterizing the noise temperature of the LNA in a front-end system is typically done with the Y-factor method. The Y-factor method applies a linear regression to a set of measurements with different noise levels to determine the experimental parameters of gain and noise temperature of a Device Under Testing (DUT) at a given frequency \citep{agilent_technologies}. In this project the Y-factor method is applied to a power spectrum from each operational state of a noise source (on/off). 
+
+This paper explores the computation of the effective noise temperature of a ZX60-112LN+ LNA over its documented frequency band (400-1100 MHz) with an automated Python script. The following sections of this paper will first describe the experimental setup and data acquisition process (Section \ref{sec:setup}), then explain the methods used to develop the automated Python script (Section \ref{sec:methods}), and lastly  results will be presented and implications will be discussed  (Section \ref{sec:results}). 
+
+\section{Experimental Setup and Data Acquisition} \label{sec:setup}
+\label{sec:setup}
+An AirSpy\footnote{\url{ https://airspy.com }} Software Defined Radio (SDR) was used to record  power spectra to determine the noise temperature of the LNA with the Y-factor test. The AirSpy SDR records a signal which is then transformed into a radio band and converted into raw radiometric voltage samples by an analog to digital converter (ADC). The \texttt{Kotekan}\footnote{\url{ https://kotekan.io }} software package is then utilized to transform the voltage samples into a power spectra.  
+
+The experimental setup consists of a switch controlled by a Trinket MO microcontroller, a 346A noise source, a ZX60-112LN+ LNA, and an AirSpy SDR. The experimental setup is shown in Figure \ref{fig:block}. The AirSpy is connected via USB to a linux host which can be queried, and similarly the microcontroller is connected to the host and is controlled remotely. We first use \texttt{Kotekan} to remotely set the 20MHz frequency band at which the AirSpy samples. We then remotely set the three internal gain parameters: \texttt{gain\_lna}, \texttt{gain\_mix}, and \texttt{gain\_if}, to  prevent the power source from overloading or under powering the device. When the AirSpy is configured, \texttt{Kotekan} returns the \texttt{railfrac} field (fraction of samples overloaded) and \texttt{rms} (root mean square of samples). These performance parameters are set to maintain the following conditions:  \texttt{railfrac} = 0 and $\texttt{rms}>300$. \texttt{Kotekan} can then be queried remotely to measure the power spectra with the desired gain and frequency settings.
+
+\section{Methods}\label{sec:methods}
+The following subsections describe the main steps of the noise temperature meter script utilized to determine the noise temperature of a LNA over its designated frequency band. The automated noise temperature meter script is publicly available\footnote{\url{https://github.com/maddynardin}} and can be used to test any LNA or more generally a Device Under Testing (DUT).
+
+\subsection{Averaging Power Spectra}
+The AirSpy SDR samples a voltage signal into 1024 frequency bins over a 20 MHz frequency range centered at a designated frequency. To determine the average value of this spectrum, disturbances caused by Radio Frequency Interference (RFI) and DC offsets must be removed from the spectrum. This is done by first trimming the spectra to remove the roll-off that occurs at the high and low ends of the spectrum, then creating a mask which enables frequencies within the band that have a power output within the range of two factors of the standard deviation of the median power. The average value of the masked spectrum is then taken to be the average power of a given power spectrum.
+
+\subsection{Y-Factor Method with Linear Regression}
+With the average value of the power spectra for the on and off state of the noise source known, we can apply the Y-factor method.
+We determine the Excess Noise Ratio (ENR) of the noise source at any frequency in decibel units by applying linear interpolation to the ENR settings intrinsic to the 346A noise source listed in Table \ref{tab:enr_tab}. The \texttt{interp()} function from the \texttt{numpy} Python library is used to linear interpolate. The ENR parameter is then converted from decibels to a unitless decimal value by equation \ref{eq:enr_db2enr}.
+\begin{equation}\label{eq:enr_db2enr}
+    ENR = 10^{ENR_{dB}/10}
+\end{equation}
+The load temperature is determined by the equation below, based on the operational state of the noise source. 
+\begin{equation*}\label{eq:T_load}
+T_{LOAD} = \left\{
+        \begin{array}{ll}
+            290\; K & \quad \mbox{noise source off} \\
+            290K(ENR+1) & \quad \mbox{noise source on} 
+        \end{array}
+    \right.
+\end{equation*}
+From equation \ref{eq:p_sys}, we define the front end radio receiver system with the following system of equations.
+\begin{equation}
+    P_{(ns\;off)} = G \times (T_{LNA} + T_{LOAD\;ns\;off})
+\end{equation}
+\begin{equation}
+     P_{(ns\;on)} = G\times (T_{LNA} + T_{LOAD\;ns\;on})
+\end{equation}
+
+\begin{figure}[h]
+\includegraphics[width=1.0\columnwidth]{yfactor_900.png}
+\caption{Linear regression applied to average power vs. load temperature data at a 900 MHz frequency. Parameters associated with linear regression are later used to determine the noise temperature of the LNA.}
+\label{fig:ytest}
+\end{figure}
+
+\begin{figure*}[ht!]
+\gridline{\fig{TLNA_spec.png}{0.5\textwidth}{(a)}\label{fig:TLNA}
+          \fig{TLNA_comp.png}{0.5\textwidth}{(b)}\label{fig:comp}
+          }
+\caption{ Noise temperature of the ZX60-112LN+ LNA over the the frequency band 400-1100 MHz (a). Experimentally determined and documented noise temperature of the ZX60-112LN+ LNA over the the frequency band 400-1100 MHz (b).
+\label{fig:ex}}
+\end{figure*}
+
+The average power vs temperature is plotted for each operational state of the noise source and a linear regression of the form $y=mx+b$ is applied to solve for the unknown gain and LNA temperature parameters. The \texttt{polyfit()} function from the \texttt{numpy} Python library is used to interpolate the documented ENR-frequency values. The slope $m$, of this linear regression is the gain of the system and the y-intercept $b$ is $\frac{T_{LNA}}{G}$, of A graphical representation of the linear regression is shown in Figure \ref{fig:ytest}, at a frequency of 900 MHz. 
+
+The noise temperature of the LNA is then given by the following equation.
+\begin{equation}
+    T_{LNA} = \frac{b}{m} 
+\end{equation}
+\begin{center}
+    Such that b and m denote the y-intercept and slope parameters of the linear regression.
+\end{center}
+
+\subsection{Automating over frequency band of the LNA }
+The steps outlined above were then implemented into a function to automate obtaining the noise temperature at a given frequency. The function \texttt{NTM}, (an abbreviation for Noise Temperature Meter) was written to loop over a defined frequency band, and at each frequency, acquire a power spectra at each operational state of the noise meter, determine the ENR and load temperatures, apply a linear regression and obtain the noise temperature of the LNA. The function then generates a plot of a plot of  $T_{LNA}$ vs. frequency for the entire frequency band of the LNA. Figure \ref{fig:TLNA} displays the generated  $T_{LNA}$ vs. frequency plot for the ZX60-112LN+ LNA.
+
+\section{Results}\label{sec:results}
+In comparison to the documented\footnote{\url{https://www.minicircuits.com/pdfs/ZX60-112LN+.pdf}} noise temperature spectrum of the LNA, the automated output is within the expected range. Discrepancies between the two data sets is explained by RFI since most of the outlier points found in the derived spectrum, occur at either the cell phone and smart meter frequency range ($\sim$900 MHz) and water meter frequency range ($\sim$470 MHz). Note these RFI frequencies are specific  to Toronto, Ontario and are obtained from municipal documentation. The RFI disturbance observed in this project, only emphasizes the importance of conserving radio quiet frequencies for radio astronomy, allowing for further advancements in the field.
+
+
+
+\bibliography{sources}{}
+\bibliographystyle{aasjournal}
+
+\begin{table*}[h]
+    \centering
+    \caption{Keysight 346A Noise Source Calibration Label}
+    \label{tab:enr_tab}
+    \begin{tabular}{cc}
+    \hline
+    \\
+         Frequency (GHz) & ENR (dB) \\
+         \\
+         \hline
+         \hline
+         \noalign{\vskip 2mm}  
+        0.01 & 5.20\\
+        0.1 & 5.38\\
+        1.0 & 5.19\\
+        2.0 & 5.01\\
+        3.0 & 4.85\\
+        \noalign{\vskip 2mm}  
+        \hline
+    \end{tabular}
+\end{table*}
+
+\end{document}
